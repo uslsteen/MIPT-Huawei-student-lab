@@ -5,8 +5,11 @@
 
 namespace Linear_space
 {
+
+
+
     template<typename Data>
-    Matrix<Data> &matr_product(const Matrix<Data> &lhs, const Matrix<Data> &rhs, Matrix<Data>& result)
+    Matrix<Data> &product_with_intr(const Matrix<Data> &lhs, const Matrix<Data> &rhs, Matrix<Data>& result)
     {
         uint lhs_rows = lhs.nrows();
         uint lhs_cols = lhs.nclmns();
@@ -31,20 +34,18 @@ namespace Linear_space
                 float lhs_elem_ = lhs[i][k];
 
 
-                for (uint j = 0; j < rhs_cols/16; j++)
+                for (uint p = 0; p < rhs_cols/16; ++p)
                 {
-                    _mm256_storeu_ps(res + j*8 + 0, _mm256_fmadd_ps(lhs_elem, _mm256_loadu_ps(rhs_row + j + 0), _mm256_loadu_ps(res + j + 0)));
-                    _mm256_storeu_ps(res + j*8 + 8, _mm256_fmadd_ps(lhs_elem, _mm256_loadu_ps(rhs_row + j + 8), _mm256_loadu_ps(res + j + 8)));
+                    _mm256_storeu_ps(res + k * 8 + 0 , _mm256_fmadd_ps(lhs_elem, _mm256_loadu_ps(rhs_row + k * 8 + 0) , _mm256_loadu_ps(res + k * 8 + 0)));
+                    _mm256_storeu_ps(res + k * 8 + 8 , _mm256_fmadd_ps(lhs_elem, _mm256_loadu_ps(rhs_row + k * 8 + 8) , _mm256_loadu_ps(res + k * 8 + 8)));
+
                 }
 
-
-                for (uint k = (rhs_cols - rhs_cols % 16) ; k < rhs_cols ; ++k)
-                    res[k] += rhs_row[k] * lhs_elem_;
+                for (uint t = (rhs_cols - rhs_cols % 16) ; t < rhs_cols ; ++t)
+                    res[t] += rhs_row[t] * lhs_elem_;
             }
         }
     }
-
-
 
 }
 
