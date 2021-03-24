@@ -34,23 +34,43 @@ int main()
 
 
     Linear_space::Matrix<float> fast_mul{num_of_rws1, num_of_clmns2, 0};
+    Linear_space::Matrix<float> unroll_mul_2{num_of_rws1, num_of_clmns2, 0};
+
 
     Time::Timer naive_mul;
     Linear_space::Matrix<float> mtr_res = mtr1 * mtr2;
     std::cout << std::endl << "Naive time:" << naive_mul.elapsed() << " millisecs\n";
 
     std::cout << "res matrix:\n";
-    OUT << mtr_res << "              <================= result\n";
+    //OUT << mtr_res << "              <================= result\n";
+
+
+    Time::Timer product_with_unroll_2_{};
+
+    product_unroll_2x(mtr1, mtr2, unroll_mul_2);
+    std::cout << std::endl << "Unroll_2 time:" << product_with_unroll_2_.elapsed() << " millisecs\n";
+
+
+    std::cout << "res matrix:\n";
+   // OUT << unroll_mul_2 << "              <================= result\n";
+
+
+    if (mtr_res == unroll_mul_2)
+        std::cout << "Mul is right!\n";
+
+    else
+        std::cout << "Something went wrong!\n";
+
 
 
     Time::Timer optimiz_mul{};
 
-    product_with_intr(mtr1,mtr2, fast_mul);
+    product_with_intr(mtr1, mtr2, fast_mul);
     std::cout << std::endl << "Optimazed time:" << optimiz_mul.elapsed() << " millisecs\n";
 
 
     std::cout << "res matrix:\n";
-    OUT << fast_mul << "              <================= result\n";
+   // OUT << fast_mul << "              <================= result\n";
 
 
     if (mtr_res == fast_mul)
