@@ -29,56 +29,97 @@ int main()
     Linear_space::Matrix<float> mtr1{num_of_rws1, num_of_clmns1, buffer1};
     Linear_space::Matrix<float> mtr2{num_of_rws2, num_of_clmns2, buffer2};
 
-    Linear_space::Matrix<float> mtr3{num_of_rws1, num_of_clmns1, buffer1};
-    Linear_space::Matrix<float> mtr4{num_of_rws2, num_of_clmns2, buffer2};
 
-
+    Linear_space::Matrix<float> naive_mul_{num_of_rws1, num_of_clmns2, 0};
     Linear_space::Matrix<float> fast_mul{num_of_rws1, num_of_clmns2, 0};
-    Linear_space::Matrix<float> unroll_mul_2{num_of_rws1, num_of_clmns2, 0};
+    Linear_space::Matrix<float> unroll_mul_2x{num_of_rws1, num_of_clmns2, 0};
+    Linear_space::Matrix<float> unroll_mul_4x{num_of_rws1, num_of_clmns2, 0};
+    Linear_space::Matrix<float> unroll_mul_8x{num_of_rws1, num_of_clmns2, 0};
 
 
-    Time::Timer naive_mul;
-    Linear_space::Matrix<float> mtr_res = mtr1 * mtr2;
-    std::cout << std::endl << "Naive time:" << naive_mul.elapsed() << " millisecs\n";
+
+    Time::Timer naive_mul_time;
+    naive_mul(mtr1, mtr2, naive_mul_);
+    std::cout << std::endl << "Naive time:" << naive_mul_time.elapsed() << " millisecs\n";
 
     std::cout << "res matrix:\n";
-    //OUT << mtr_res << "              <================= result\n";
 
 
-    Time::Timer product_with_unroll_2_{};
+    //OUT << naive_mul_ << "              <================= result\n";
 
-    product_unroll_2x(mtr1, mtr2, unroll_mul_2);
-    std::cout << std::endl << "Unroll_2 time:" << product_with_unroll_2_.elapsed() << " millisecs\n";
+    /* <=====================================================================> */
+
+    Time::Timer unroll_mul_2x_time{};
+
+    mul_unroll_2x(mtr1, mtr2, unroll_mul_2x);
+    std::cout << std::endl << "Unroll_2 time:" << unroll_mul_2x_time.elapsed() << " millisecs\n";
 
 
     std::cout << "res matrix:\n";
    // OUT << unroll_mul_2 << "              <================= result\n";
 
 
-    if (mtr_res == unroll_mul_2)
+    if (naive_mul_ == unroll_mul_2x)
         std::cout << "Mul is right!\n";
 
     else
         std::cout << "Something went wrong!\n";
 
 
+    /* <=====================================================================> */
+
+    Time::Timer unroll_mul_4x_time{};
+
+    mul_unroll_4x(mtr1, mtr2, unroll_mul_4x);
+    std::cout << std::endl << "Unroll_4 time:" << unroll_mul_4x_time.elapsed() << " millisecs\n";
+
+
+    std::cout << "res matrix:\n";
+    // OUT << unroll_mul_2 << "              <================= result\n";
+
+
+    if (naive_mul_ == unroll_mul_4x)
+        std::cout << "Mul is right!\n";
+
+    else
+        std::cout << "Something went wrong!\n";
+
+    /* <=====================================================================> */
+
+    Time::Timer unroll_mul_8x_time{};
+
+    mul_unroll_4x(mtr1, mtr2, unroll_mul_8x);
+    std::cout << std::endl << "Unroll_8 time:" << unroll_mul_8x_time.elapsed() << " millisecs\n";
+
+
+    std::cout << "res matrix:\n";
+    // OUT << unroll_mul_2 << "              <================= result\n";
+
+
+    if (naive_mul_ == unroll_mul_8x)
+        std::cout << "Mul is right!\n";
+
+    else
+        std::cout << "Something went wrong!\n";
+
+    /* <=====================================================================> */
 
     Time::Timer optimiz_mul{};
 
-    product_with_intr(mtr1, mtr2, fast_mul);
+    mul_with_intrinsics(mtr1, mtr2, fast_mul);
     std::cout << std::endl << "Optimazed time:" << optimiz_mul.elapsed() << " millisecs\n";
 
 
     std::cout << "res matrix:\n";
-   // OUT << fast_mul << "              <================= result\n";
+    // OUT << fast_mul << "              <================= result\n";
 
 
-    if (mtr_res == fast_mul)
+    if (naive_mul_ == fast_mul)
         std::cout << "Mul is right!\n";
 
     else
         std::cout << "Something went wrong!\n";
 
-
+    
     return 0;
 }
