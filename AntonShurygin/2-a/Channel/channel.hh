@@ -15,8 +15,10 @@ private:
 public:
 
     Channel(uint height, uint widht, uint n_chnls);
-    Channel(const std::vector<Matr_flt>& matr_vec, uint height, uint widht);
-    Channel(const Channel& chnl) = delete;
+    Channel(uint height, uint widht, const std::vector<Matr_flt>& matr_vec);
+    Channel(const Channel& chnl);
+
+    ~Channel() {}
 
     uint get_height() const;
 

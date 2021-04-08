@@ -12,16 +12,17 @@ namespace Linear_space
             channels[k] = (Matr_flt{height_, widht_, 0});
     }
 
-    Channel::Channel(const std::vector<Matr_flt>& matr_vec, uint height, uint widht) : height_(height),
+    Channel::Channel(uint height, uint widht, const std::vector<Matr_flt>& matr_vec) : height_(height),
                                                                                 widht_(widht),
                                                                                 n_chnls_(matr_vec.size())
     {
+
         channels.reserve(n_chnls_);
 
         for (size_t k = 0; k < n_chnls_; ++k)
             channels[k] = matr_vec[k];
     } 
-/*
+
     Channel::Channel(const Channel& chnl)
     {
         height_ = chnl.get_height();
@@ -32,7 +33,7 @@ namespace Linear_space
         
         for (auto&& chnl_: chnl.channels)
             channels.push_back(chnl_);
-    }*/
+    }
 
     Channel& Channel::operator= (const Channel& rhs)
     {
@@ -104,12 +105,14 @@ namespace Linear_space
            height = chnl.get_height(),
            widht = chnl.get_widht();
 
+    
     for (size_t k = 0; k < n_chnl; ++k)
-    {
+    {   
+        std::cout << "Layer №" << k + 1 << std::endl;
         Matr_flt tmp = chnl.get_matr(k);
 
         os << tmp;
-        os << "         " << std::endl;
+        os << std::endl;
     }
 }                                                                                                     
 }
