@@ -6,21 +6,17 @@ namespace Linear_space
 
 class Channel final
 {
-    private: 
+private: 
     std::vector<Matr_flt> channels;
 
     uint height_, widht_;
     uint n_chnls_;
 
-    public:
+public:
 
     Channel(uint height, uint widht, uint n_chnls);
-
-    Channel(std::vector<Matr_flt>& matr_vec, uint height,
-                                             uint widht, 
-                                             uint n_chnls);
-
-    Channel(const Channel& chnl);
+    Channel(const std::vector<Matr_flt>& matr_vec, uint height, uint widht);
+    Channel(const Channel& chnl) = delete;
 
     uint get_height() const;
 
