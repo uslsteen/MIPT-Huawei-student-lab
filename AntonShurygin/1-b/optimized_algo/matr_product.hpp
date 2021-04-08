@@ -1,8 +1,7 @@
-#ifndef __MATR_PRODUCT_HPP__
-#define __MATR_PRODUCT_HPP__
+#ifndef __MATR_PRODUCT_H__
+#define __MATR_PRODUCT_H__
 
-#include "Matrix.hpp"
-
+#include "../naive_algo/Matrix.hpp"
 
 
 namespace Mul_optim
@@ -173,7 +172,6 @@ namespace Mul_optim
 
     std::vector<func_info> functions = 
     {
-        {naive_mul, "naive_mul"},
         {mul_unroll_2x, "unrolling_2x"},
         {mul_unroll_4x, "unrolling_4x"},
         {mul_unroll_8x, "unrolling_8x"},
@@ -182,4 +180,4 @@ namespace Mul_optim
 
 }
 
-#endif __MATR_PRODUCT_HPP__
+#endif __MATR_PRODUCT_H__
