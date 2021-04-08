@@ -3,8 +3,20 @@
 
 #include "Matrix.hpp"
 
+
+
 namespace Mul_optim
 {
+    using mul_func = void (*)(const Matr_int& lhs, const Matr_int& rhs, Matr_int& result);
+
+
+    struct func_info
+    {
+        mul_func func;
+        std::string func_name;
+    };
+
+    
     void naive_mul(const Matr_int &lhs, const Matr_int &rhs, Matr_int& result)
     {
         uint lhs_rows = lhs.nrows(), rhs_cols = rhs.nclmns(), lhs_cols = lhs.nclmns(),
@@ -159,6 +171,14 @@ namespace Mul_optim
 
 
 
+    std::vector<func_info> functions = 
+    {
+        {naive_mul, "naive_mul"},
+        {mul_unroll_2x, "unrolling_2x"},
+        {mul_unroll_4x, "unrolling_4x"},
+        {mul_unroll_8x, "unrolling_8x"},
+        {mul_with_intrinsics, "mul_with_intrinsics"},
+    };
 
 }
 
