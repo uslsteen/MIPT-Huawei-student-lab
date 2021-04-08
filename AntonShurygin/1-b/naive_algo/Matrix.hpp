@@ -7,9 +7,10 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include <ctime>
+#include <immintrin.h>
 
 
 namespace Linear_space
@@ -98,7 +99,7 @@ namespace Linear_space
             }
 
             //! Constructor for matrix class from buffer
-            Matrix(uint rows_, uint clmns_,const std::vector<Data>& buffer) : rows(rows_),
+            Matrix(uint rows_, uint clmns_, const std::vector<Data>& buffer) : rows(rows_),
                                                                               clmns(clmns_)
             {
                 assert(rows_ * clmns_ != 0);
@@ -172,17 +173,19 @@ namespace Linear_space
             }
 
             //! Copy constructor for class Matrix
-            Matrix(const Matrix<Data>& rhs) : rows(rhs.rows),
-                                              clmns(rhs.clmns)
+            Matrix(const Matrix<int>& rhs) : rows(rhs.nrows()),
+                                             clmns(rhs.nclmns())
             {
-                matrix = new Data* [rhs.rows];
+                uint rhs_rows = rhs.nrows(), rhs_cols = rhs.nclmns();
 
-                for (size_t i = 0; i < rhs.rows; ++i)
+                matrix = new Data* [rhs_rows];
+
+                for (size_t i = 0; i < rhs_rows; ++i)
                 {
-                    matrix[i] = new Data [rhs.clmns];
+                    matrix[i] = new Data [rhs_cols];
 
-                    for (size_t j = 0; j < rhs.clmns; ++j)
-                        matrix[i][j] = rhs.matrix[i][j];
+                    for (size_t j = 0; j < rhs_cols; ++j)
+                        matrix[i][j] = rhs[i][j];
                 }
             }
 
@@ -197,12 +200,12 @@ namespace Linear_space
             }
 
             //Getters of class matrix
-            uint nrows()
+            uint nrows() const
             {
                 return rows;
             }
 
-            uint nclmns()
+            uint nclmns() const
             {
                 return clmns;
             }
@@ -323,6 +326,13 @@ namespace Linear_space
                 return true;
             }
 
+
+            Data* operator [](size_t i) const
+            {
+                return matrix[i];
+            }
+
+            /*
             Row_struct operator [](size_t i) const
             {
                 assert(i < rows);
@@ -334,7 +344,7 @@ namespace Linear_space
                 assert(i < rows);
                 return Row_struct{clmns, matrix[i]};
             }
-
+            */
 
 
     private:
@@ -415,8 +425,6 @@ namespace Linear_space
                     }
                 }
             }
-
-
 
 
             //! Function for trannsposing matrix
@@ -504,7 +512,9 @@ namespace Linear_space
                 for (int k = 0; k < (*this).clmns; ++k)
                     (*this).matrix[k][i] *= static_cast<double>(value);
             }
+        
     };
+
 
     //! Also binary reloaded operators for working with matrix
 
@@ -553,6 +563,12 @@ namespace Linear_space
 
 }
 
+
+namespace Mul_optim
+{
+using type = int;
+using Matr_int = Linear_space::Matrix<type>;
+}
 
 
 #endif //MATRIX_MATRIX_H
