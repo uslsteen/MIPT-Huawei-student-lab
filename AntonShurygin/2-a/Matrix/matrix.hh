@@ -26,8 +26,6 @@ namespace Linear_space
             //! Perfomance of my matrix
             Data** matrix = nullptr;
 
-            
-
             //! using for special data type of my matrix
             using DataIt = typename std::vector<Data>::iterator;
 
@@ -84,7 +82,7 @@ namespace Linear_space
 
 
             //! Constructor for matrix class of value
-            Matrix(uint rows_, uint clmns_, Data val) : rows(rows_),
+            Matrix(uint rows_, uint clmns_, Data val = Data{}) : rows(rows_),
                                                                  clmns(clmns_)
             {
                 assert(rows_ * clmns_ != 0);
@@ -161,16 +159,8 @@ namespace Linear_space
 
                 return matr;
             }
-/*
-            Matrix(Matrix&& mtr) : rows(0), 
-                                   clmns(0), 
-                                   matrix(nullptr)
-            {
-                std::swap( rows, mtr.rows);
-                std::swap( clmns, mtr.clmns);
-                std::swap( matrix, mtr.matrix );
-            }
-*/
+
+
             //! The function returns the identity matrix
             static Matrix eye(uint num)
             {
@@ -238,31 +228,6 @@ namespace Linear_space
 
                 return (*this);
             }
-/*
-            Matrix &operator=(Matrix&& other_matr)
-            {
-                if (this != &other_matr)
-                {
-                    for (size_t i = 0; i < rows; ++i)
-                        delete[] matrix[i];
-
-                    delete[] matrix;
-
-                    rows = other_matr.rows;
-                    clmns = other_matr.clmns;
-
-                    matrix = other_matr.matrix;
-
-                    for (size_t i = 0; i < rows; ++i)
-                        matrix[i] = nullptr;
-
-                    matrix = nullptr;
-
-                    other_matr.clmns = 0;
-                    other_matr.rows = 0;
-                }
-                return *this;
-            }*/
 
             Matrix<Data> operator -() const
             {
@@ -550,8 +515,6 @@ namespace Linear_space
         
     };
 
-    using type = float;
-    using Matr_flt = Linear_space::Matrix<type>;
 
     //! Also binary reloaded operators for working with matrix
 
@@ -570,23 +533,6 @@ namespace Linear_space
 
         return os;
     }
-
-    template <typename Data>
-    std::ostream& operator <<(std::ostream &os, Matr_flt& matr)
-    {
-        for (size_t i = 0; i < matr.nrows(); ++i)
-        {
-           // os << "|| ";
-
-            for (size_t j = 0; j < matr.nclmns(); ++j)
-                os << matr[i][j] << " ";
-
-            os << std::endl;
-        }
-
-        return os;
-    }
-
 
     template <typename Data>
     Matrix<Data> operator +(const Matrix<Data>& lhs, const Matrix<Data>& rhs)
@@ -614,6 +560,11 @@ namespace Linear_space
         res *= rhs;
         return res;
     }
+
+    using type = float;
+    using Matr_flt = Linear_space::Matrix<type>;
+
+
 }
 
 
