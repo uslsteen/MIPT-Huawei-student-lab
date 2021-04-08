@@ -2,15 +2,22 @@
 
 namespace Linear_space
 {
-    Tensor_4d::Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch) : height_(height),
+    Tensor_4d::Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch) :  height_(height),
                                                                                  widht_(widht),
                                                                                  n_chnls_(n_chnls),
                                                                                  n_butch_(n_butch)
     {
+        
         butchs.reserve(n_butch_);
 
         for (size_t k = 0; k < n_butch_; ++k)
             butchs[k] = Channel{height_, widht_, n_chnls};
+        
+
+       /*
+       for (size_t i = 0; i < n_butch; ++i)
+            butchs.push_back({height, widht, n_chnls});
+        */
     }
 
     Tensor_4d::Tensor_4d(const std::vector<Channel>& chnl_vec, uint height, uint widht, uint n_chnls) : height_(height),
@@ -22,7 +29,18 @@ namespace Linear_space
 
         for (size_t k = 0; k < n_butch_; ++k)
             butchs[k] = chnl_vec[k];
-    } 
+    }
+
+    Tensor_4d::Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, float data) : height_(height),
+                                                                                            widht_(widht),
+                                                                                            n_chnls_(n_chnls),
+                                                                                            n_butch_(n_butch)
+    {
+        butchs.reserve(n_butch_);
+
+        for (size_t k = 0; k < n_butch_; ++k)
+            butchs[k] = Channel{height_, widht_, n_chnls, data};
+    }
 /*
     Channel::Channel(const Channel& chnl)
     {

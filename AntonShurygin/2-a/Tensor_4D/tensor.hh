@@ -19,6 +19,7 @@ public:
 
     Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch);
     Tensor_4d(const std::vector<Channel>& chnl_vec, uint height, uint widht, uint n_chnls);
+    Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, float data);
     Tensor_4d(const Tensor_4d& chnl) = delete;
 
     uint get_height() const;
