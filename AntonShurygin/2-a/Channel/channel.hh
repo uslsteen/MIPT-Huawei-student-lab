@@ -22,23 +22,19 @@ class Channel final
 
     Channel(const Channel& chnl);
 
-    uint get_height() const
-    { return height_; }
+    uint get_height() const;
 
-    uint get_widht()  const 
+    uint get_widht()  const;
+  
+    uint get_n_chnls() const;
 
-    { return widht_;  }  
-    uint get_n_chnls() const
+    const Matr_flt& get_matr(size_t index);
 
-    { return n_chnls_; } 
-    Matr_flt& get_matr(size_t index)   { return channels[index]; }
+    const Matr_flt& operator[] (size_t index);
 
+    Channel& operator= (const Channel& chnl);
 
-    Matr_flt& operator[] (size_t index);
-
-    Channel& operator= (Channel& chnl);
-
-    bool operator== (Channel& chnl);
+    bool operator== (const Channel& chnl);
 
     
 
