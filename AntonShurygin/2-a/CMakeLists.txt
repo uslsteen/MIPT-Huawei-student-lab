@@ -5,9 +5,7 @@ project(Convolution)
 
 
 set(WARN_OPTIONS
-  -Wall -Wextra -Wunused -Wpedantic # classic
-  -Wno-old-style-cast -Waggressive-loop-optimizations
-  -Wunreachable-code)
+  -Wall -Wextra)
 
 set(CMAKE_CXX_STANDARD 14)
 
