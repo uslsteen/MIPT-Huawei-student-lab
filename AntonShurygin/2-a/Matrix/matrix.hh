@@ -68,7 +68,7 @@ namespace Linear_space
 
 
             //! Constructor for matrix of zeros
-            Matrix(int rows_, int clmns_) : rows(rows_),
+            Matrix(uint rows_, uint clmns_) : rows(rows_),
                                             clmns(clmns_)
             {
                 assert(rows_*clmns_ != 0);

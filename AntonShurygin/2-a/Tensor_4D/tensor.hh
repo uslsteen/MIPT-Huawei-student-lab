@@ -17,10 +17,11 @@ private:
 
 public:
 
+    Tensor_4d() {};
     Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch);
     Tensor_4d(const std::vector<Channel>& chnl_vec, uint height, uint widht, uint n_chnls);
     Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, float data);
-    Tensor_4d(const Tensor_4d& chnl);
+    Tensor_4d(const Tensor_4d& tensor);
     ~Tensor_4d() {};
 
     uint get_height() const;
@@ -33,7 +34,7 @@ public:
 
     const Channel& get_chnl(size_t index);
 
-    const Channel& operator[] (size_t index);
+    Channel& operator[] (size_t index);
 
     Tensor_4d& operator= (const Tensor_4d& chnl);
     

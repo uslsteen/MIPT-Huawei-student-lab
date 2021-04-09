@@ -111,7 +111,7 @@ namespace Linear_space
     }
 
 
-    const Channel& Tensor_4d::operator[] (size_t index)
+    Channel& Tensor_4d::operator[] (size_t index)
     {
         return butchs[index];
     }
