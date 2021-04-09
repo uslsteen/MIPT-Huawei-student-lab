@@ -59,7 +59,6 @@ void convolution_2d(Channel& channel,Channel& kernel, Matrix& result)
             for (uint j = 0; j < res_cols; ++j)
             {
                 Matrix chan_layer{cur_matr_layer_tens};
-                //Matrix chan_layer{cur_matr_layer_tens, cur_matr_layer_kern.nrows(), cur_matr_layer_kern.nclmns(), i, j};
                 conv_res[i][j] = sum_and_mul(chan_layer, cur_matr_layer_kern);
             }
             
