@@ -8,12 +8,14 @@ namespace Linear_space
 
 Tensor_4d naive_convolution(Tensor_4d& tensor,Tensor_4d& kernel)
 {
+    //! Creating size of output tensor
     uint res_height = tensor.get_height() - kernel.get_height() + 1;
     uint res_width = tensor.get_widht() - kernel.get_widht() + 1;
     uint tens_butch = tensor.get_n_butch();
 
-    Tensor_4d result{res_height, res_width, tens_butch, kernel.get_n_butch()};
+    Tensor_4d result{res_height, res_width, kernel.get_n_butch(), tens_butch};
 
+    //! Moving over the tensor_4d by kernel and conv3d
     for (uint cur_batch = 0; cur_batch < tens_butch; ++cur_batch)
         convolution_3d(tensor[cur_batch], kernel, result[cur_batch]);
     
@@ -36,6 +38,7 @@ float sum_and_mul(Matrix& layer, Matrix& kernel)
 void convolution_3d(Channel& channel,Tensor_4d& kernel, Channel& result)
 {
     uint kernel_butch = kernel.get_n_butch();
+
 
     for (uint cur_kernel_btch = 0; cur_kernel_btch <  kernel_butch; ++cur_kernel_btch)
         convolution_2d(channel, kernel[cur_kernel_btch], result[cur_kernel_btch]);
