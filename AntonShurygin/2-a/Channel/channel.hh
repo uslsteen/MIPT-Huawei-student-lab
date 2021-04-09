@@ -29,7 +29,7 @@ public:
 
     const Matrix& get_matr(size_t index);
 
-    const Matrix& operator[] (size_t index);
+    Matrix& operator[] (size_t index);
 
     Channel& operator= (const Channel& chnl);
 

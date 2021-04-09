@@ -100,7 +100,7 @@ namespace Linear_space
     }
 
 
-    const Matrix& Channel::operator[] (size_t index)
+    Matrix& Channel::operator[] (size_t index)
     {
         return channels[index];
     }
