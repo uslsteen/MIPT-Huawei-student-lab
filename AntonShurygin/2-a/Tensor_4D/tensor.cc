@@ -7,17 +7,9 @@ namespace Linear_space
                                                                                  n_chnls_(n_chnls),
                                                                                  n_butch_(n_butch)
     {
-        
-        butchs.reserve(n_butch_);
-
+        //butchs.reserve(n_butch_);
         for (size_t k = 0; k < n_butch_; ++k)
-            butchs[k] = Channel{height_, widht_, n_chnls};
-        
-
-       /*
-       for (size_t i = 0; i < n_butch; ++i)
-            butchs.push_back({height, widht, n_chnls});
-        */
+            butchs.emplace_back(height_, widht_, n_chnls);
     }
 
     Tensor_4d::Tensor_4d(const std::vector<Channel>& chnl_vec, uint height, uint widht, uint n_chnls) : height_(height),
@@ -28,7 +20,7 @@ namespace Linear_space
         butchs.reserve(n_butch_);
 
         for (size_t k = 0; k < n_butch_; ++k)
-            butchs[k] = chnl_vec[k];
+            butchs.emplace_back(chnl_vec[k]);
     }
 
     Tensor_4d::Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, float data) : height_(height),
@@ -39,20 +31,20 @@ namespace Linear_space
         butchs.reserve(n_butch_);
 
         for (size_t k = 0; k < n_butch_; ++k)
-            butchs[k] = Channel{height_, widht_, n_chnls, data};
+            butchs.emplace_back(height_, widht_, n_chnls, data);
     }
-/*
-    Channel::Channel(const Channel& chnl)
+
+
+    Tensor_4d::Tensor_4d(const Tensor_4d& tensor)
     {
-        height_ = chnl.get_height();
-        widht_ = chnl.get_widht();
-        n_chnls_ = chnl.get_n_chnls();
+        height_ = tensor.get_height();
+        widht_ = tensor.get_widht();
+        n_chnls_ = tensor.get_n_chnls();
+        n_butch_ = tensor.get_n_butch();
 
-
-        
-        for (auto&& chnl_: chnl.channels)
-            channels.push_back(chnl_);
-    }*/
+        for (auto&& butchs_: tensor.butchs)
+            butchs.push_back(butchs_);
+    }
 
     Tensor_4d& Tensor_4d::operator= (const Tensor_4d& rhs)
     {
@@ -126,18 +118,19 @@ namespace Linear_space
 
     std::ostream& operator << (std::ostream& os, Tensor_4d& tensor)
     {
-    size_t n_chnl = tensor.get_n_chnls(),
-           height = tensor.get_height(),
-           widht = tensor.get_widht(),
-           n_butch = tensor.get_n_butch();
+        size_t n_chnl = tensor.get_n_chnls(),
+               height = tensor.get_height(),
+               widht = tensor.get_widht(),
+               n_butch = tensor.get_n_butch();
 
-    for (size_t k = 0; k < n_butch; ++k)
-    {
-        std::cout << "Butch №" << k + 1 << std::endl;
-        Channel tmp = tensor.get_chnl(k);
+        for (size_t k = 0; k < n_butch; ++k)
+        {
+            std::cout << "Butch №" << k + 1 << std::endl;
+            std::cout << "______________________________\n";
+            Channel tmp = tensor.get_chnl(k);
 
-        os << tmp;
-        os << "         " << std::endl;
-    }
-}                                                                                                     
+            os << tmp;
+            os << "         " << std::endl;
+        }
+    }                                                                                                        
 }

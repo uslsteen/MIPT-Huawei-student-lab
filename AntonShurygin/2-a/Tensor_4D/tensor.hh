@@ -20,7 +20,8 @@ public:
     Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch);
     Tensor_4d(const std::vector<Channel>& chnl_vec, uint height, uint widht, uint n_chnls);
     Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, float data);
-    Tensor_4d(const Tensor_4d& chnl) = delete;
+    Tensor_4d(const Tensor_4d& chnl);
+    ~Tensor_4d() {};
 
     uint get_height() const;
 
@@ -30,7 +31,6 @@ public:
 
     uint get_n_butch() const;
 
-    const Matr_flt& get_matr(size_t index);
     const Channel& get_chnl(size_t index);
 
     const Channel& operator[] (size_t index);
@@ -41,7 +41,7 @@ public:
 
 };
 
-std::ostream& operator << (std::ostream& os, Tensor_4d& chnl);
+std::ostream& operator << (std::ostream& os, Tensor_4d& tensor);
 
 }
 
