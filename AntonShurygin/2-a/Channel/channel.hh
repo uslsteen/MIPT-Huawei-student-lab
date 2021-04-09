@@ -19,6 +19,8 @@ public:
     Channel(uint height, uint widht, uint n_chnls);
     Channel(const std::vector<Matrix>& matr_vec, uint height, uint widht);
     Channel(uint height, uint widht, uint n_chnls, float data);
+    Channel(uint height, uint widht, uint n_chnls, enum Mode mode);
+
     Channel(const Channel& chnl);
 
     uint get_height() const;

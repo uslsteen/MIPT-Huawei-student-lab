@@ -11,14 +11,17 @@
 #include <fstream>
 #include <ctime>
 #include <immintrin.h>
+#include <cstdlib>
 
 
 namespace Linear_space
 {
  
+    enum Mode
+    {
+        RANDOM
+    };
 
-
-     
     class Matrix final
     {
         private:
@@ -97,6 +100,25 @@ namespace Linear_space
 
                     for (size_t j = 0; j < clmns; ++j)
                         matrix[i][j] = val;
+                }
+
+            }
+
+            Matrix(uint rows_, uint clmns_, enum Mode mode) : rows(rows_),
+                                                                    clmns(clmns_)
+            {
+                assert(rows_ * clmns_ != 0);
+                matrix = new float* [rows];
+
+                for (size_t i = 0; i < rows; ++i)
+                {
+                    matrix[i] = new float[clmns];
+
+                    for (size_t j = 0; j < clmns; ++j)
+                    {
+                        if (mode == Mode::RANDOM)
+                            matrix[i][j] = static_cast<float>((rand() % 5)) / 2;
+                    }
                 }
 
             }

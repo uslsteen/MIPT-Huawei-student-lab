@@ -34,6 +34,18 @@ namespace Linear_space
             butchs.emplace_back(height_, widht_, n_chnls, data);
     }
 
+    Tensor_4d::Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch, enum Mode mode) :   height_(height),
+                                                                                                        widht_(widht),
+                                                                                                        n_chnls_(n_chnls),
+                                                                                                        n_butch_(n_butch)
+    {
+        butchs.reserve(n_butch_);
+
+        for (size_t k = 0; k < n_butch_; ++k)
+            butchs.emplace_back(height_, widht_, n_chnls, mode);
+    }
+
+
 
     Tensor_4d::Tensor_4d(const Tensor_4d& tensor)
     {

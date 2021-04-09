@@ -31,6 +31,15 @@ namespace Linear_space
             channels.emplace_back(height_, widht_, data);
     }
 
+    Channel::Channel(uint height, uint widht, uint n_chnls, enum Mode mode) : height_(height),
+                                                                                    widht_(widht),
+                                                                                    n_chnls_(n_chnls)
+    {
+        //channels.reserve(n_chnls_);
+        for (size_t k = 0; k < n_chnls_; ++k)
+            channels.emplace_back(height_, widht_, mode);
+    }
+
     Channel::Channel(const Channel& chnl)
     {
         height_ = chnl.get_height();

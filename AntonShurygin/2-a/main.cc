@@ -1,14 +1,15 @@
 #include "Cnvltion_algo/Naive_algo/naive_algo.hh"
+#include "my_time.hpp"
 
 using namespace Linear_space;
 
 void Simple_test_2d()
 {
     std::cout << "simple_testing_2d have started:\n";
-    Tensor_4d tensor{4, 4, 1, 1, 2.5};
+    Tensor_4d tensor{4, 4, 1, 1, Mode::RANDOM};
     std::cout << tensor;
 
-    Tensor_4d kernel{3, 3, 1, 1, 4};
+    Tensor_4d kernel{3, 3, 1, 1, Mode::RANDOM};
     std::cout << kernel;
     
     Tensor_4d result;
@@ -53,11 +54,42 @@ void Simple_test_4d()
 }
 
 
+void Conv_test()
+{
+    uint tens_butch = 4, tens_channels = 8, tens_h = 16, tens_w = 32;
+    uint kernel_butch = 2, kernel_channels = 4, kernel_h = 10, kernel_w = 4; 
+
+    Tensor_4d tensor{tens_h, tens_w, tens_channels, tens_butch, Mode::RANDOM};
+
+    #if 0
+    std::cout << tensor;
+    #endif
+
+    Tensor_4d kernel{kernel_h, kernel_w, kernel_channels, kernel_butch, Mode::RANDOM};
+
+    #if 0
+    std::cout << kernel;
+    #endif
+
+    Time::Timer naive_time;
+
+    Tensor_4d result = naive_convolution(tensor, kernel);
+
+    std::cout << "naive_conv time: " << naive_time.elapsed() << " milliseconds";
+
+    #if 0
+    std::cout << result; 
+    #endif
+}
+
 
 
 int main()
 {
-    Simple_test_2d();
-    Simple_test_3d();
-    Simple_test_4d();
+    //Simple_test_2d();
+    //Simple_test_3d();
+    //Simple_test_4d();
+
+
+    Conv_test();
 }
