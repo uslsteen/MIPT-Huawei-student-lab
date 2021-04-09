@@ -2,44 +2,25 @@
 
 using namespace Linear_space;
 
-void Channel_test_func()
+void Simple_test_2d()
 {
-    
-    //Channel test{matr_vec, height, widht}; 
-
-}
-
-int main()
-{
-    //Channel_test_func();
-    //Channel test{5, 5, 5};
-    /*
-
-    Channel channel1{2, 2, 2};
-    std::cout << channel1;
-
-    Channel channel2{5, 5, 5, 5};
-    std::cout << channel2;
-
-    Channel channel3{2, 2, 2, 2};
-    std::cout << channel3;
-
-
-    Tensor_4d tensor1{2, 2, 2, 2, 2};
-
-    std::cout << tensor1;
-    */
-    /*Tensor_4d(uint height, uint widht, uint n_chnls, uint n_butch);*/
-
     Tensor_4d tensor{4, 4, 1, 1, 5};
     std::cout << tensor;
+
     Tensor_4d kernel{3, 3, 1, 1, 2};
     std::cout << kernel;
+    
     Tensor_4d result;
 
     result = naive_convolution(tensor, kernel);
 
     std::cout << result; 
+}
+
+int main()
+{
+    
+    Simple_test_2d();
 
     //std::cout << test;
 }
