@@ -1,4 +1,4 @@
-#include "Tensor_4D/tensor.hh"
+#include "Cnvltion_algo/Naive_algo/naive_algo.hh"
 
 using namespace Linear_space;
 
