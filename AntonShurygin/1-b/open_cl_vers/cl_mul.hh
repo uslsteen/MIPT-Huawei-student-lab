@@ -59,11 +59,10 @@ private:
 
   bool build();
 
-  bool kernel_exec(cl::Kernel kernel, size_t global_size, size_t local_size, std::vector<cl::Event> &events);
+  bool kernel_exec(cl::Kernel kernel, cl::NDRange global_size, cl::NDRange local_size);
+  void gpu_timing(cl::Event &event);
+  void Device_selection();
 
-  void gpu_timing(std::vector<cl::Event> &events, cl_ulong *time);
-
-  void cl_mul(const Matr_int& lhs, const Matr_int& rhs);
 
 public:
 
@@ -73,11 +72,11 @@ public:
 
   ~Driver() = default;
 
-  void Device_selection(); // choose first suited platform and device
+  Matr_int cl_mul(Matr_int& lhs, Matr_int& rhs);
 };
 
 
-Matr_int& cl_matr_mul(Matr_int& lhs, Matr_int& rhs);
+Matr_int cl_matr_mul(Matr_int& lhs, Matr_int& rhs);
 
 //Matr_int bsort(std::vector<int> &vec, Dir dir);
 const char *err_what(cl_int err_code);

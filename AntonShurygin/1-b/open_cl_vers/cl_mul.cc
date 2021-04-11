@@ -3,6 +3,16 @@
 namespace Mul_optim
 {
 
+  Matr_int cl_matr_mul(Matr_int& lhs, Matr_int& rhs)
+  {
+    Driver driver{};
+
+    Matr_int mtr = driver.cl_mul(lhs, rhs);
+
+    return mtr;
+  }
+
+
 /**
  * @brief
  *
@@ -102,147 +112,53 @@ bool Driver::build()
 
 
 
-void Driver::cl_mul(const Matr_int& lhs, const Matr_int& rhs)
+Matr_int Driver::cl_mul(Matr_int& lhs, Matr_int& rhs)
 {
-  uint lhs_rows = lhs.nrows(), lhs_cols = lhs.nclmns(),
-       rhs_rows = rhs.nrows(), rhs_cols = rhs.nclmns();
+  const uint lhs_rows = lhs.nrows(), /*lhs_cols = lhs.nclmns(),*/
+             rhs_rows = rhs.nrows(), rhs_cols = rhs.nclmns();
 
+  std::vector<int> lhs_buf, rhs_buf, res_buf;
+  cl::NDRange glob_size = {lhs_rows, rhs_cols};
+  cl::NDRange loc_size = cl::NullRange;
+
+  res_buf.resize(lhs_rows * rhs_cols);
+
+  lhs.vectorize(lhs_buf);
+  rhs.vectorize(rhs_buf);
+
+  cl::Buffer cl_lhs_buf{context_, lhs_buf.begin(), lhs_buf.end(), true, true};
+
+  cl::Buffer cl_rhs_buf{context_, rhs_buf.begin(), rhs_buf.end(), true, true};
+
+  cl::Buffer cl_res_buf(context_, CL_MEM_READ_WRITE, sizeof(int) * res_buf.size());
   
-  
-/*
-  cl::Buffer cl_lhs_buf(context_, CL_MEM_READ_WRITE, sizeof(int) * lhs_rows * lhs_cols);
-  queue_.enqueueWriteBuffer(cl_lhs_buf, CL_TRUE, 0, sizeof(int) * lhs_rows * lhs_cols, vec.data());
-
-  cl::Buffer cl_rhs_buf(context_, CL_MEM_READ_WRITE, sizeof(int) * rhs_rows * rhs_cols);
-  */
-
-  cl_ulong gpu_time = 0;
-  std::vector<cl::Event> events;
-
   //! Setting args for execution fast_sort_
   try
   {
-    naive_mul_.setArg(0, lhs);
-    naive_mul_.setArg(1, rhs);
 
-    //! fast_sort_ execution
-    if (!kernel_exec(fast_sort_, glob_size, loc_size, events))
+    naive_mul_.setArg(0, cl_lhs_buf);
+    naive_mul_.setArg(1, cl_rhs_buf);
+    naive_mul_.setArg(2, cl_res_buf);
+
+    naive_mul_.setArg(3, static_cast<unsigned>(lhs_rows));
+    naive_mul_.setArg(4, static_cast<unsigned>(rhs_rows));
+    naive_mul_.setArg(5, static_cast<unsigned>(rhs_cols));
+  
+
+    if (!kernel_exec(naive_mul_, glob_size, loc_size))
       throw std::runtime_error{"Execution of simple_sort wasn't sucsessful!\n"};
 
-    // event.wait();
   }
   catch (cl::Error &err)
   {
     std::cerr << "Error occured in " << err.what() << std::endl;
     std::cerr << err_what(err.err()) << std::endl;
   }
+
+  cl::copy(queue_, cl_res_buf, res_buf.begin(), res_buf.end());
+
+  return Matr_int{lhs_rows, rhs_cols, res_buf};
 }
-
-/*
-void Driver::sort_extended(std::vector<int> &vec, Dir dir)
-{
-  //! Getting old size for resizing in future out vec
-  size_t old_vec_size = vec.size();
-
-  //! Resizing our vec for working with a number that is a power of two
-  Vec_preparing(vec, dir);
-  size_t new_vec_size = vec.size();
-
-  //! global_size <=> number of work-items that I wish to execute
-  //! vec.size() / 2 cause work item shall compare two elems
-  size_t glob_size = vec.size() / 2;
-
-  //! local_size <=> number of work-items that I wish to group into a work-group
-  //! size of loc_size should be less or equal work_group
-  //! This is the reason of comparing elems on this distance
-  size_t loc_size = std::min(glob_size, work_group_size);
-
-  //! Creating special buffer for working with glod memory in kernel
-  cl::Buffer buffer(context_, CL_MEM_READ_WRITE, sizeof(int) * vec.size());
-  queue_.enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(int) * vec.size(), vec.data());
-
-  //! Getting number of pairs of our resized vector
-  uint num_of_pairs = std::ceil(std::log2(new_vec_size));
-
-  uint cur_stage = std::log2(loc_size);
-
-  //! Allocation local memory for working in fast_sort_
-  cl::LocalSpaceArg local = cl::Local(2 * loc_size * sizeof(int));
-
-  cl_ulong gpu_time = 0;
-  std::vector<cl::Event> events;
-
-  //! Setting args for execution fast_sort_
-  try
-  {
-    fast_sort_.setArg(0, buffer);
-    fast_sort_.setArg(1, cur_stage);
-    fast_sort_.setArg(2, local);
-    fast_sort_.setArg(3, static_cast<unsigned>(dir));
-
-    //! fast_sort_ execution
-    if (!kernel_exec(fast_sort_, glob_size, loc_size, events))
-      throw std::runtime_error{"Execution of simple_sort wasn't sucsessful!\n"};
-
-    // event.wait();
-  }
-  catch (cl::Error &err)
-  {
-    std::cerr << "Error occured in " << err.what() << std::endl;
-    std::cerr << err_what(err.err()) << std::endl;
-  }
-
-  events[0].wait();
-
-  gpu_timing(events, &gpu_time);
-
-  /*
-     There is we process all stages, which was skipped in fast_sort_,
-     because of work_grp > loc_ size
-  */
-/*
-  events.clear();
-
-  for (; cur_stage < num_of_pairs; ++cur_stage)
-  {
-    for (uint passed_stage = 0; passed_stage < cur_stage + 1; ++passed_stage)
-    {
-      // cl::Event event_simple;
-      try
-      {
-        //! Setting args for execution simple_sort_
-        simple_sort_.setArg(0, buffer);
-        simple_sort_.setArg(1, cur_stage);
-        simple_sort_.setArg(2, passed_stage);
-        simple_sort_.setArg(3, static_cast<unsigned>(dir));
-
-        //! Same
-        if (!kernel_exec(simple_sort_, glob_size, loc_size, events))
-          throw std::runtime_error{"Execution of simple_sort wasn't sucsessful!\n"};
-      }
-
-      catch (cl::Error &err)
-      {
-        std::cerr << "Error occured in " << err.what() << std::endl;
-        std::cerr << err_what(err.err()) << std::endl;
-      }
-    }
-  }
-
-  for (auto &&evnt : events)
-    evnt.wait();
-  // Getting sorted buf with help mapping cl::Buffer
-
-  gpu_timing(events, &gpu_time);
-
-  cl::copy(queue_, buffer, vec.begin(), vec.end());
-
-#if TIME
-  std::cout << "Driver gpu_time: " << gpu_time << " microsecs\n";
-#endif
-
-  vec.resize(old_vec_size);
-} *//* End of 'sort_extended' function */
 
 /**
  * @brief Function for execution kernel
@@ -253,7 +169,7 @@ void Driver::sort_extended(std::vector<int> &vec, Dir dir)
  * @return true
  * @return false
  */
-bool Driver::kernel_exec(cl::Kernel kernel, size_t global_size, size_t local_size, std::vector<cl::Event> &events)
+bool Driver::kernel_exec(cl::Kernel kernel, cl::NDRange global_size, cl::NDRange local_size)
 {
   cl::Event event;
 
@@ -262,25 +178,34 @@ bool Driver::kernel_exec(cl::Kernel kernel, size_t global_size, size_t local_siz
   if (err_num != CL_SUCCESS)
     return false;
 
-  events.push_back(event);
+  event.wait();
+
+  gpu_timing(event);
 
   return true;
 } /* End of 'kernel_exec' function*/
 
 
 
-void Driver::gpu_timing(std::vector<cl::Event> &events, cl_ulong *time)
-{
-#if TIME
+/**
+ * @brief Function for timing gpu process
+ * @param events - 
+ */
 
-  for (auto &&evnt : events)
-  {
-    auto start = evnt.getProfilingInfo<CL_PROFILING_COMMAND_START>();
-    auto end = evnt.getProfilingInfo<CL_PROFILING_COMMAND_END>();
-    auto microsecs = (end - start) / 1000;
-    *time += microsecs;
-  }
-#endif
+void Driver::gpu_timing(cl::Event &event)
+{
+  #if TIMER
+
+    cl_ulong time = 0;
+
+    auto start = event.getProfilingInfo<CL_PROFILING_COMMAND_START>();
+    auto end = event.getProfilingInfo<CL_PROFILING_COMMAND_END>();
+    time = (end - start) / 1000;
+
+    std::cout << "\ngpu time naive_mul: " << time << " microsecs\n\n";
+    #endif
+
 }
+
 
 } // namespace BTS
