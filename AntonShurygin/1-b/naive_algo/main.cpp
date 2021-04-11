@@ -10,7 +10,6 @@ using namespace Mul_optim;
 
 
 
-
 template <typename Data>
 void Buffer_init(Data& buffer, uint& num_of_rws, uint& num_of_clmns)
 {
@@ -31,38 +30,41 @@ void Buffer_init(Data& buffer, uint& num_of_rws, uint& num_of_clmns)
 }
 
 
-void Mul_testing(func_info& func_struct, Mul_optim::Matr_int& naive_mul, Mul_optim::Matr_int& lhs, 
+bool Mul_testing(func_info& func_struct, Mul_optim::Matr_int& naive_mul, Mul_optim::Matr_int& lhs, 
                                                                          Mul_optim::Matr_int& rhs, 
                                                                          Mul_optim::Matr_int result)
 {
-    #if TIMER
+#if TIMER
     Time::Timer mul_time;
-    #endif
+#endif
 
     func_struct.func(lhs, rhs, result);
     
-    #if TIMER
+#if TIMER
     std::cout << std::endl << func_struct.func_name << " time:" << mul_time.elapsed() << " millisecs\n";
-    #endif
+    return true;
+#endif
 
-    #if CORRECT
+#if CORRECT
 
     std::cout << "res matrix:\n";
     OUT << result << "              <================= result\n";
 
-    #endif
-
-    #if CORRECT
     if (naive_mul == result)
+    {
         std::cout << func_struct.func_name << " is right!\n";
-
+        return true;
+    }
     else
-        std::cout << "Something went wrong in" << func_struct.func_name << "!\n";
-    #endif
+    {
+        std::cout << "Something went wrong in " << func_struct.func_name << "!\n";
+        return false;
+    }
+#endif
 }
 
 
-void gpu_test(Matr_int& lhs, Matr_int& rhs, Matr_int& naive_mul)
+bool gpu_test(Matr_int& lhs, Matr_int& rhs, Matr_int& naive_mul)
 {
 #if TIMER
     Time::Timer gpu_time;
@@ -72,14 +74,24 @@ void gpu_test(Matr_int& lhs, Matr_int& rhs, Matr_int& naive_mul)
 
 #if TIMER
     std::cout << "cl_time: " << gpu_time.elapsed() << "millisecs\n";
+    return true;
 #endif
 
 #if CORRECT
-    if (naive_mul == result)
-        std::cout << "gpu naive mul is right!\n";
 
+    std::cout << "res matrix:\n";
+    OUT << result << "              <================= result\n";
+
+    if (naive_mul == result)
+    {
+        std::cout << "gpu naive mul is right!\n";
+        return true;
+    }
     else
+    {
         std::cout << "Something went wrong in gpu naive mul!\n";
+        return false;
+    }
 #endif
 }
 
@@ -117,13 +129,15 @@ int main()
     OUT << naive_mul_ << "              <================= result\n";
 #endif
 
-    gpu_test(lhs, rhs, naive_mul_);
+    if (!gpu_test(lhs, rhs, naive_mul_))
+        return -1;
 
     for (auto&& func: Mul_optim::functions)
     {
         result.set_zero();
 
-        Mul_testing(func, naive_mul_, lhs, rhs, result);
+        if (!Mul_testing(func, naive_mul_, lhs, rhs, result))
+            return -1;
     }
  
     return 0;
