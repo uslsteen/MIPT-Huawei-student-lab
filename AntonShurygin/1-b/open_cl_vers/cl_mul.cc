@@ -115,7 +115,7 @@ bool Driver::build()
 Matr_int Driver::cl_mul(Matr_int& lhs, Matr_int& rhs)
 {
   const uint lhs_rows = lhs.nrows(), /*lhs_cols = lhs.nclmns(),*/
-             rhs_rows = rhs.nrows(), rhs_cols = rhs.nclmns();
+       rhs_rows = rhs.nrows(), rhs_cols = rhs.nclmns();
 
   std::vector<int> lhs_buf, rhs_buf, res_buf;
   cl::NDRange glob_size = {lhs_rows, rhs_cols};
@@ -136,14 +136,13 @@ Matr_int Driver::cl_mul(Matr_int& lhs, Matr_int& rhs)
   try
   {
 
-    naive_mul_.setArg(0, cl_lhs_buf);
-    naive_mul_.setArg(1, cl_rhs_buf);
-    naive_mul_.setArg(2, cl_res_buf);
+    naive_mul_.setArg(0, lhs_rows);
+    naive_mul_.setArg(1, rhs_rows);
+    naive_mul_.setArg(2, rhs_cols);
 
-    naive_mul_.setArg(3, static_cast<unsigned>(lhs_rows));
-    naive_mul_.setArg(4, static_cast<unsigned>(rhs_rows));
-    naive_mul_.setArg(5, static_cast<unsigned>(rhs_cols));
-  
+    naive_mul_.setArg(3, cl_lhs_buf);
+    naive_mul_.setArg(4, cl_rhs_buf);
+    naive_mul_.setArg(5, cl_res_buf);
 
     if (!kernel_exec(naive_mul_, glob_size, loc_size))
       throw std::runtime_error{"Execution of simple_sort wasn't sucsessful!\n"};
