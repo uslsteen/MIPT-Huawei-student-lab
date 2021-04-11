@@ -103,14 +103,11 @@ bool Driver::build()
 } /* End of 'build' function */
 
 /**
- * @brief sort_extended - sort, which called by user in main
- *        "extened" because it work not only with numbers is a power of two
+ * @brief cl_mul - mul, which called by user in main
  *
  * @param vec
  * @param dir
  */
-
-
 
 Matr_int Driver::cl_mul(Matr_int& lhs, Matr_int& rhs)
 {
